@@ -98,11 +98,46 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares: Array(9).fill(null)
+                squares: Array(9).fill(null),
+                position: null
             }],
             stepNumber:0,
-            xIsNext: TextTrackCueList
+            xIsNext: true
         };
+    }
+
+    determinePosition(i) {
+        let location;
+        switch(i) {
+                case 0:
+                    location = "(1, 1)";
+                    break;
+                case 1:
+                    location = "(2, 1)";
+                    break;
+                case 2:
+                    location = "(3, 1)";
+                    break;
+                case 3:
+                    location = "(1, 2)";
+                    break;
+                case 4:
+                    location = "(2, 2)";
+                    break;
+                case 5:
+                    location = "(3, 2)";
+                    break;
+                case 6:
+                    location = "(1, 3)";
+                    break;
+                case 7:
+                    location = "(2, 3)";
+                    break;
+                default:
+                    location = "(3, 3)";
+                    break;
+        }
+        return location;
     }
     
     handleClick(i) {
@@ -115,7 +150,8 @@ class Game extends React.Component {
         squares[i] = this.state.xIsNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
-                squares: squares
+                squares: squares,
+                position: this.determinePosition(i)
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext
@@ -129,6 +165,15 @@ class Game extends React.Component {
         });
     }
 
+    movePosition(move, step) {
+        let moveDesc;
+        moveDesc = 'Go to move #' + move + ',';
+        // Determine column and row
+        // get the square given the stepNumber
+        moveDesc += " " + this.state.history[move].position;
+        return moveDesc;
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -136,7 +181,7 @@ class Game extends React.Component {
 
         const moves = history.map((step, move) => {
             const desc = move ?
-                'Go to move #' + move :
+                this.movePosition(move, step) :
                 'Go to game start';
             return (
                 <li key={move}>
