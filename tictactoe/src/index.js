@@ -99,7 +99,8 @@ class Game extends React.Component {
         this.state = {
             history: [{
                 squares: Array(9).fill(null),
-                position: null
+                position: null,
+                selected: false
             }],
             stepNumber:0,
             xIsNext: true
@@ -151,7 +152,8 @@ class Game extends React.Component {
         this.setState({
             history: history.concat([{
                 squares: squares,
-                position: this.determinePosition(i)
+                position: this.determinePosition(i),
+                selected: false
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext
@@ -162,7 +164,10 @@ class Game extends React.Component {
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0
-        });
+        })
+        this.state.history[step].setState({
+            selected: true
+        })
     }
 
     movePosition(move, step) {
@@ -183,11 +188,19 @@ class Game extends React.Component {
             const desc = move ?
                 this.movePosition(move, step) :
                 'Go to game start';
-            return (
+            /*return (
                 <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
+                    <button onClick={() => this.jumpTo(move)}>
+                    {desc}</button>
                 </li>
-            )
+            )*/
+            if (this.state.history[move].selected === true) {
+                return React.createElement('li', 'key={move}', React.createElement('button', 'onClick={() => this.jumpTo(move)}', 'b', desc));
+
+            }
+            else {
+                return React.createElement('li', 'key={move}', React.createElement('button', 'onClick={() => this.jumpTo(move)}', desc));
+            }
         })
         let status;
         if (winner) {
